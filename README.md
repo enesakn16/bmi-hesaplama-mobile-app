@@ -9,12 +9,16 @@ Kotlin ve Jetpack Compose ile geliştirilen sade, test edilebilir Android BMI uy
 - Gerçekçi kilo ve boy sınırı doğrulaması
 - Tek ondalığa yuvarlanmış BMI sonucu
 - Zayıf, normal, fazla kilolu ve obez kategorileri
+- Ekran dönüşlerinde korunan ViewModel tabanlı UI durumu
+- Formu tek dokunuşla temizleme
 - Tıbbi değerlendirme yerine geçmediğini belirten açık uyarı
 
 ## Mimari
 
 ```text
-Compose UI
+Stateless Compose UI
+   ↓ events / ↑ state
+BmiViewModel
    ↓
 BmiCalculator.evaluate
    ↓
@@ -23,7 +27,7 @@ BmiEvaluation.Success / Invalid
 BmiResult + BmiCategory
 ```
 
-Hesaplama mantığı Android sınıflarına bağlı değildir. Bu sayede cihaz veya emülatör açılmadan JVM birim testleriyle doğrulanabilir.
+`BmiScreen` yalnızca kendisine verilen durumu gösterir ve kullanıcı olaylarını yukarı iletir. `BmiViewModel` ekran durumunun tek doğruluk kaynağıdır ve yapılandırma değişikliklerinde korunur. Hesaplama mantığı Android sınıflarına bağlı değildir; cihaz veya emülatör açılmadan JVM testleriyle doğrulanabilir.
 
 ## Teknolojiler
 
@@ -31,6 +35,7 @@ Hesaplama mantığı Android sınıflarına bağlı değildir. Bu sayede cihaz v
 - Jetpack Compose
 - Compose BOM 2026.06.00
 - Android Gradle Plugin 8.13
+- Lifecycle ViewModel Compose 2.10.0
 - JDK 17
 - Minimum Android 7.0 / API 24
 
@@ -48,17 +53,19 @@ Pull request ve `main` pushlarında GitHub Actions bu üç komutu otomatik çal�
 
 ## Önemli dosyalar
 
-- `app/src/main/java/com/enesakin/bmi/MainActivity.kt`: Compose ekranı
+- `app/src/main/java/com/enesakin/bmi/MainActivity.kt`: stateless Compose ekranı ve route
+- `app/src/main/java/com/enesakin/bmi/BmiViewModel.kt`: ekran durumu ve kullanıcı olayları
 - `app/src/main/java/com/enesakin/bmi/domain/BmiCalculator.kt`: doğrulama ve hesaplama
-- `app/src/test/java/com/enesakin/bmi/domain/BmiCalculatorTest.kt`: birim testleri
+- `app/src/test/java/com/enesakin/bmi/BmiViewModelTest.kt`: ekran durumu testleri
+- `app/src/test/java/com/enesakin/bmi/domain/BmiCalculatorTest.kt`: domain birim testleri
 - `.github/workflows/android-ci.yml`: test, lint ve APK üretimi
 
 ## Yol haritası
 
-- Ekran durumunu ViewModel'e taşıma
-- Geçmiş hesaplamaları yalnızca kullanıcının açık tercihiyle yerel saklama
 - Erişilebilirlik ve Compose UI testleri
+- Geçmiş hesaplamaları yalnızca kullanıcının açık tercihiyle yerel saklama
 - İmzalanmamış debug APK yerine sürümlenmiş release akışı
+- Material 3 renk ve tipografi sistemini özelleştirme
 
 ## Sağlık uyarısı
 
