@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,19 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.enesakin.bmi.domain.BmiCalculator
-import com.enesakin.bmi.domain.BmiEvaluation
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    BmiScreen()
+                    BmiRoute()
                 }
             }
         }
@@ -41,11 +38,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun BmiScreen() {
-    var weight by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var feedback by remember { mutableStateOf("Kilonu ve boyunu girerek hesaplamaya başla.") }
+private fun BmiRoute(viewModel: BmiViewModel = viewModel()) {
+    BmiScreen(
+        state = viewModel.uiState,
+        onWeightChanged = viewModel::onWeightChanged,
+        onHeightChanged = viewModel::onHeightChanged,
+        onCalculate = viewModel::calculate,
+        onReset = viewModel::reset
+    )
+}
 
+@Composable
+private fun BmiScreen(
+    state: BmiUiState,
+    onWeightChanged: (String) -> Unit,
+    onHeightChanged: (String) -> Unit,
+    onCalculate: () -> Unit,
+    onReset: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,8 +71,8 @@ private fun BmiScreen() {
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = weight,
-            onValueChange = { weight = it },
+            value = state.weight,
+            onValueChange = onWeightChanged,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Kilo (kg)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -70,8 +80,8 @@ private fun BmiScreen() {
         )
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
-            value = height,
-            onValueChange = { height = it },
+            value = state.height,
+            onValueChange = onHeightChanged,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Boy (cm)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -79,19 +89,21 @@ private fun BmiScreen() {
         )
         Spacer(Modifier.height(20.dp))
 
-        Button(
-            onClick = {
-                feedback = when (val evaluation = BmiCalculator.evaluate(weight, height)) {
-                    is BmiEvaluation.Invalid -> evaluation.message
-                    is BmiEvaluation.Success ->
-                        "BMI: ${evaluation.result.value} · ${evaluation.result.category.label}"
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Hesapla")
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(
+                onClick = onCalculate,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Hesapla")
+            }
+            OutlinedButton(
+                onClick = onReset,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Temizle")
+            }
         }
         Spacer(Modifier.height(20.dp))
-        Text(feedback, style = MaterialTheme.typography.titleMedium)
+        Text(state.feedback, style = MaterialTheme.typography.titleMedium)
     }
 }
