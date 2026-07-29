@@ -8,6 +8,7 @@ Kotlin ve Jetpack Compose ile geliştirilen sade, test edilebilir Android BMI uy
 - Virgül veya nokta ile ondalık değer desteği
 - Gerçekçi kilo ve boy sınırı doğrulaması
 - Tek ondalığa yuvarlanmış BMI sonucu
+- Kategori eşiklerinde yuvarlama kaynaklı yanlış sınıflandırmayı önleyen ham değer hesabı
 - Zayıf, normal, fazla kilolu ve obez kategorileri
 - Ekran dönüşlerinde korunan ViewModel tabanlı UI durumu
 - Formu tek dokunuşla temizleme
@@ -28,6 +29,8 @@ BmiResult + BmiCategory
 ```
 
 `BmiScreen` yalnızca kendisine verilen durumu gösterir ve kullanıcı olaylarını yukarı iletir. `BmiViewModel` ekran durumunun tek doğruluk kaynağıdır ve yapılandırma değişikliklerinde korunur. Hesaplama mantığı Android sınıflarına bağlı değildir; cihaz veya emülatör açılmadan JVM testleriyle doğrulanabilir.
+
+BMI sonucu kullanıcıya tek ondalık basamakla gösterilir; kategori sınıflandırması ise yuvarlanmamış ham değer üzerinden yapılır. Böylece 18,5, 25 ve 30 eşiklerine çok yakın değerler ekranda yuvarlansa bile yanlış kategoriye geçirilmez.
 
 ## Teknolojiler
 
