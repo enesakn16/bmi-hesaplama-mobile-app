@@ -28,8 +28,9 @@ class BmiViewModel : ViewModel() {
     fun calculate() {
         val feedback = when (val evaluation = BmiCalculator.evaluate(uiState.weight, uiState.height)) {
             is BmiEvaluation.Invalid -> evaluation.message
-            is BmiEvaluation.Success ->
-                "BMI: ${evaluation.result.value} · ${evaluation.result.category.label}"
+            is BmiEvaluation.Success -> with(evaluation.result) {
+                "BMI: $value · ${category.label}\nBoyuna göre sağlıklı kilo aralığı: $healthyWeightMin–$healthyWeightMax kg"
+            }
         }
         uiState = uiState.copy(feedback = feedback)
     }
