@@ -12,6 +12,7 @@ Kotlin ve Jetpack Compose ile geliştirilen sade, test edilebilir Android BMI uy
 - Zayıf, normal, fazla kilolu ve obez kategorileri
 - Ekran dönüşlerinde korunan ViewModel tabanlı UI durumu
 - Formu tek dokunuşla temizleme
+- Başlık, giriş alanları, eylemler ve sonuç mesajı için ekran okuyucu semantiği
 - Tıbbi değerlendirme yerine geçmediğini belirten açık uyarı
 
 ## Mimari
@@ -32,6 +33,14 @@ BmiResult + BmiCategory
 
 BMI sonucu kullanıcıya tek ondalık basamakla gösterilir; kategori sınıflandırması ise yuvarlanmamış ham değer üzerinden yapılır. Böylece 18,5, 25 ve 30 eşiklerine çok yakın değerler ekranda yuvarlansa bile yanlış kategoriye geçirilmez.
 
+## Erişilebilirlik
+
+- Ekran başlığı semantik olarak başlık işaretlidir.
+- Kilo ve boy alanları kararlı test etiketleri ve düzenlenebilir alan semantiği taşır.
+- Hesapla ve Temizle eylemleri tıklanabilir semantik düğümler olarak doğrulanır.
+- Sonuç ve doğrulama mesajı `Polite` canlı bölge olarak tanımlıdır; ekran okuyucu güncellemeyi kullanıcıyı bölmeden duyurabilir.
+- Compose UI erişilebilirlik testleri CI içinde derlenir; böylece semantik API veya test sözleşmesi kırıkları PR aşamasında yakalanır.
+
 ## Teknolojiler
 
 - Kotlin 2.3.21
@@ -48,24 +57,26 @@ Compose Compiler Gradle plugin'i Kotlin 2.0 ve üzerindeki resmi kurulum yaklaş
 
 ```bash
 gradle testDebugUnitTest
+gradle assembleDebugAndroidTest
 gradle lintDebug
 gradle assembleDebug
 ```
 
-Pull request ve `main` pushlarında GitHub Actions bu üç komutu otomatik çalıştırır. Başarılı çalışmada debug APK artifact olarak yüklenir.
+Pull request ve `main` pushlarında GitHub Actions birim testlerini çalıştırır, Compose UI test APK'sını derler, Android lint uygular ve debug APK üretir. Başarılı çalışmada debug APK artifact olarak yüklenir.
 
 ## Önemli dosyalar
 
-- `app/src/main/java/com/enesakin/bmi/MainActivity.kt`: stateless Compose ekranı ve route
+- `app/src/main/java/com/enesakin/bmi/MainActivity.kt`: stateless Compose ekranı, route ve erişilebilirlik semantiği
 - `app/src/main/java/com/enesakin/bmi/BmiViewModel.kt`: ekran durumu ve kullanıcı olayları
 - `app/src/main/java/com/enesakin/bmi/domain/BmiCalculator.kt`: doğrulama ve hesaplama
 - `app/src/test/java/com/enesakin/bmi/BmiViewModelTest.kt`: ekran durumu testleri
 - `app/src/test/java/com/enesakin/bmi/domain/BmiCalculatorTest.kt`: domain birim testleri
+- `app/src/androidTest/java/com/enesakin/bmi/BmiScreenAccessibilityTest.kt`: Compose erişilebilirlik sözleşmesi testleri
 - `.github/workflows/android-ci.yml`: test, lint ve APK üretimi
 
 ## Yol haritası
 
-- Erişilebilirlik ve Compose UI testleri
+- Erişilebilirlik testlerini emülatör üzerinde çalıştıran yönetilen cihaz CI işi
 - Geçmiş hesaplamaları yalnızca kullanıcının açık tercihiyle yerel saklama
 - İmzalanmamış debug APK yerine sürümlenmiş release akışı
 - Material 3 renk ve tipografi sistemini özelleştirme
