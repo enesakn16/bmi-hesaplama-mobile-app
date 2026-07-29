@@ -20,9 +20,23 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+
+internal object BmiTestTags {
+    const val TITLE = "bmi_title"
+    const val WEIGHT_INPUT = "weight_input"
+    const val HEIGHT_INPUT = "height_input"
+    const val CALCULATE_BUTTON = "calculate_button"
+    const val RESET_BUTTON = "reset_button"
+    const val FEEDBACK = "bmi_feedback"
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +63,7 @@ private fun BmiRoute(viewModel: BmiViewModel = viewModel()) {
 }
 
 @Composable
-private fun BmiScreen(
+internal fun BmiScreen(
     state: BmiUiState,
     onWeightChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
@@ -62,7 +76,13 @@ private fun BmiScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text("BMI Hesaplama", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = "BMI Hesaplama",
+            modifier = Modifier
+                .testTag(BmiTestTags.TITLE)
+                .semantics { heading() },
+            style = MaterialTheme.typography.headlineMedium
+        )
         Spacer(Modifier.height(8.dp))
         Text(
             "Sonuç bilgilendirme amaçlıdır; tıbbi değerlendirme yerine geçmez.",
@@ -73,7 +93,9 @@ private fun BmiScreen(
         OutlinedTextField(
             value = state.weight,
             onValueChange = onWeightChanged,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(BmiTestTags.WEIGHT_INPUT),
             label = { Text("Kilo (kg)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true
@@ -82,7 +104,9 @@ private fun BmiScreen(
         OutlinedTextField(
             value = state.height,
             onValueChange = onHeightChanged,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(BmiTestTags.HEIGHT_INPUT),
             label = { Text("Boy (cm)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true
@@ -92,18 +116,28 @@ private fun BmiScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
                 onClick = onCalculate,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(BmiTestTags.CALCULATE_BUTTON)
             ) {
                 Text("Hesapla")
             }
             OutlinedButton(
                 onClick = onReset,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(BmiTestTags.RESET_BUTTON)
             ) {
                 Text("Temizle")
             }
         }
         Spacer(Modifier.height(20.dp))
-        Text(state.feedback, style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = state.feedback,
+            modifier = Modifier
+                .testTag(BmiTestTags.FEEDBACK)
+                .semantics { liveRegion = LiveRegionMode.Polite },
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 }
