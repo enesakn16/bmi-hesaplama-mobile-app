@@ -39,7 +39,8 @@ BMI sonucu kullanıcıya tek ondalık basamakla gösterilir; kategori sınıflan
 - Kilo ve boy alanları kararlı test etiketleri ve düzenlenebilir alan semantiği taşır.
 - Hesapla ve Temizle eylemleri tıklanabilir semantik düğümler olarak doğrulanır.
 - Sonuç ve doğrulama mesajı `Polite` canlı bölge olarak tanımlıdır; ekran okuyucu güncellemeyi kullanıcıyı bölmeden duyurabilir.
-- Compose UI erişilebilirlik testleri CI içinde derlenir; böylece semantik API veya test sözleşmesi kırıkları PR aşamasında yakalanır.
+- Compose UI erişilebilirlik testleri CI içinde önce derlenir, ardından Android 15 / API 35 emülatöründe çalıştırılır.
+- Başarısız çalışmalarda instrumentation test raporları artifact olarak saklanır.
 
 ## Teknolojiler
 
@@ -60,9 +61,10 @@ gradle testDebugUnitTest
 gradle assembleDebugAndroidTest
 gradle lintDebug
 gradle assembleDebug
+gradle connectedDebugAndroidTest
 ```
 
-Pull request ve `main` pushlarında GitHub Actions birim testlerini çalıştırır, Compose UI test APK'sını derler, Android lint uygular ve debug APK üretir. Başarılı çalışmada debug APK artifact olarak yüklenir.
+Pull request ve `main` pushlarında GitHub Actions birim testlerini, Android lint kontrolünü ve APK üretimini çalıştırır. Ayrı erişilebilirlik işi Compose instrumentation testlerini API 35 emülatöründe yürütür. Başarılı doğrulamada debug APK; instrumentation işi tamamlandığında test raporları artifact olarak yüklenir.
 
 ## Önemli dosyalar
 
@@ -72,11 +74,10 @@ Pull request ve `main` pushlarında GitHub Actions birim testlerini çalıştır
 - `app/src/test/java/com/enesakin/bmi/BmiViewModelTest.kt`: ekran durumu testleri
 - `app/src/test/java/com/enesakin/bmi/domain/BmiCalculatorTest.kt`: domain birim testleri
 - `app/src/androidTest/java/com/enesakin/bmi/BmiScreenAccessibilityTest.kt`: Compose erişilebilirlik sözleşmesi testleri
-- `.github/workflows/android-ci.yml`: test, lint ve APK üretimi
+- `.github/workflows/android-ci.yml`: birim test, emülatör testi, lint ve APK üretimi
 
 ## Yol haritası
 
-- Erişilebilirlik testlerini emülatör üzerinde çalıştıran yönetilen cihaz CI işi
 - Geçmiş hesaplamaları yalnızca kullanıcının açık tercihiyle yerel saklama
 - İmzalanmamış debug APK yerine sürümlenmiş release akışı
 - Material 3 renk ve tipografi sistemini özelleştirme
