@@ -42,4 +42,28 @@ class BmiCalculatorTest {
         assertEquals(30.0, evaluation.result.value, 0.0)
         assertEquals(BmiCategory.OBESE, evaluation.result.category)
     }
+
+    @Test
+    fun `keeps underweight category when display value rounds to normal boundary`() {
+        val evaluation = BmiCalculator.evaluate("59.81", "180") as BmiEvaluation.Success
+
+        assertEquals(18.5, evaluation.result.value, 0.0)
+        assertEquals(BmiCategory.UNDERWEIGHT, evaluation.result.category)
+    }
+
+    @Test
+    fun `keeps normal category when display value rounds to overweight boundary`() {
+        val evaluation = BmiCalculator.evaluate("80.84", "180") as BmiEvaluation.Success
+
+        assertEquals(25.0, evaluation.result.value, 0.0)
+        assertEquals(BmiCategory.NORMAL, evaluation.result.category)
+    }
+
+    @Test
+    fun `keeps overweight category when display value rounds to obesity boundary`() {
+        val evaluation = BmiCalculator.evaluate("97.04", "180") as BmiEvaluation.Success
+
+        assertEquals(30.0, evaluation.result.value, 0.0)
+        assertEquals(BmiCategory.OVERWEIGHT, evaluation.result.category)
+    }
 }
