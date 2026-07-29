@@ -12,7 +12,10 @@ class BmiViewModelTest {
         viewModel.onHeightChanged("180")
         viewModel.calculate()
 
-        assertEquals("BMI: 23.3 · Normal", viewModel.uiState.feedback)
+        assertEquals(
+            "BMI: 23.3 · Normal\nBoyuna göre sağlıklı kilo aralığı: 59.9–80.7 kg",
+            viewModel.uiState.feedback
+        )
     }
 
     @Test
