@@ -7,9 +7,11 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasImeAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.text.input.ImeAction
 import org.junit.Rule
 import org.junit.Test
 
@@ -34,9 +36,11 @@ class BmiScreenAccessibilityTest {
         composeRule.onNodeWithTag(BmiTestTags.WEIGHT_INPUT)
             .assertIsDisplayed()
             .assert(hasSetTextAction())
+            .assert(hasImeAction(ImeAction.Next))
         composeRule.onNodeWithTag(BmiTestTags.HEIGHT_INPUT)
             .assertIsDisplayed()
             .assert(hasSetTextAction())
+            .assert(hasImeAction(ImeAction.Done))
         composeRule.onNodeWithTag(BmiTestTags.CALCULATE_BUTTON)
             .assertIsDisplayed()
             .assertHasClickAction()
