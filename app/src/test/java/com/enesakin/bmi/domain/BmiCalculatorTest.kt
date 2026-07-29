@@ -13,6 +13,19 @@ class BmiCalculatorTest {
         val result = (evaluation as BmiEvaluation.Success).result
         assertEquals(23.3, result.value, 0.0)
         assertEquals(BmiCategory.NORMAL, result.category)
+        assertEquals(59.9, result.healthyWeightMin, 0.0)
+        assertEquals(80.7, result.healthyWeightMax, 0.0)
+    }
+
+    @Test
+    fun `calculates healthy weight range from height independently of current weight`() {
+        val lighter = BmiCalculator.evaluate("55", "170") as BmiEvaluation.Success
+        val heavier = BmiCalculator.evaluate("95", "170") as BmiEvaluation.Success
+
+        assertEquals(53.5, lighter.result.healthyWeightMin, 0.0)
+        assertEquals(72.0, lighter.result.healthyWeightMax, 0.0)
+        assertEquals(lighter.result.healthyWeightMin, heavier.result.healthyWeightMin, 0.0)
+        assertEquals(lighter.result.healthyWeightMax, heavier.result.healthyWeightMax, 0.0)
     }
 
     @Test
