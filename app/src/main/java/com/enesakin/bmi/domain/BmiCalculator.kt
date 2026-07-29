@@ -11,7 +11,9 @@ enum class BmiCategory(val label: String) {
 
 data class BmiResult(
     val value: Double,
-    val category: BmiCategory
+    val category: BmiCategory,
+    val healthyWeightMin: Double,
+    val healthyWeightMax: Double
 )
 
 sealed interface BmiEvaluation {
@@ -34,8 +36,9 @@ object BmiCalculator {
         }
 
         val heightMeters = heightCm / 100.0
-        val raw = weight / (heightMeters * heightMeters)
-        val rounded = round(raw * 10.0) / 10.0
+        val heightSquared = heightMeters * heightMeters
+        val raw = weight / heightSquared
+        val rounded = roundToSingleDecimal(raw)
         val category = when {
             raw < 18.5 -> BmiCategory.UNDERWEIGHT
             raw < 25.0 -> BmiCategory.NORMAL
@@ -43,6 +46,15 @@ object BmiCalculator {
             else -> BmiCategory.OBESE
         }
 
-        return BmiEvaluation.Success(BmiResult(rounded, category))
+        return BmiEvaluation.Success(
+            BmiResult(
+                value = rounded,
+                category = category,
+                healthyWeightMin = roundToSingleDecimal(18.5 * heightSquared),
+                healthyWeightMax = roundToSingleDecimal(24.9 * heightSquared)
+            )
+        )
     }
+
+    private fun roundToSingleDecimal(value: Double): Double = round(value * 10.0) / 10.0
 }
