@@ -37,9 +37,9 @@ object BmiCalculator {
         val raw = weight / (heightMeters * heightMeters)
         val rounded = round(raw * 10.0) / 10.0
         val category = when {
-            rounded < 18.5 -> BmiCategory.UNDERWEIGHT
-            rounded < 25.0 -> BmiCategory.NORMAL
-            rounded < 30.0 -> BmiCategory.OVERWEIGHT
+            raw < 18.5 -> BmiCategory.UNDERWEIGHT
+            raw < 25.0 -> BmiCategory.NORMAL
+            raw < 30.0 -> BmiCategory.OVERWEIGHT
             else -> BmiCategory.OBESE
         }
 
