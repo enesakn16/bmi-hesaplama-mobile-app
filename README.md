@@ -12,6 +12,7 @@ Kotlin ve Jetpack Compose ile geliştirilen sade, test edilebilir Android BMI uy
 - Zayıf, normal, fazla kilolu ve obez kategorileri
 - Ekran dönüşlerinde korunan ViewModel tabanlı UI durumu
 - Formu tek dokunuşla temizleme
+- Mobil klavyede kilo alanından boya, boy alanından doğrudan hesaplamaya ilerleyen IME akışı
 - Başlık, giriş alanları, eylemler ve sonuç mesajı için ekran okuyucu semantiği
 - Tıbbi değerlendirme yerine geçmediğini belirten açık uyarı
 
@@ -37,6 +38,7 @@ BMI sonucu kullanıcıya tek ondalık basamakla gösterilir; kategori sınıflan
 
 - Ekran başlığı semantik olarak başlık işaretlidir.
 - Kilo ve boy alanları kararlı test etiketleri ve düzenlenebilir alan semantiği taşır.
+- Kilo alanı `Next`, boy alanı `Done` IME eylemini sunar; `Done` klavyeyi kapatıp hesaplamayı başlatır.
 - Hesapla ve Temizle eylemleri tıklanabilir semantik düğümler olarak doğrulanır.
 - Sonuç ve doğrulama mesajı `Polite` canlı bölge olarak tanımlıdır; ekran okuyucu güncellemeyi kullanıcıyı bölmeden duyurabilir.
 - Compose UI erişilebilirlik testleri CI içinde önce derlenir, ardından Android 15 / API 35 emülatöründe çalıştırılır.
